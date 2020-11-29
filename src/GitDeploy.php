@@ -302,7 +302,7 @@ class GitDeploy
                 $backup_file,
                 $this->target_dir));
             $this->log(sprintf(
-                'Backup of %s has been created at %s (%s)',
+                'Backup of %s has been created at %s (%s)'.self::NL,
                 $this->target_dir,
                 $backup_file,
                 $this->formatSize(filesize($backup_file))
