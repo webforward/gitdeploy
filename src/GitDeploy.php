@@ -42,7 +42,7 @@ namespace Webforward;
 class GitDeploy
 {
     /** @var string $remote_repository The repository url which you would like to deploy */
-    public $remote_repository = 'git@provider.org:owner/repository.git';
+    public $remote_repository = '';
 
     /** @var string $branch The repository branch which you would like to deploy */
     public $branch = 'master';
