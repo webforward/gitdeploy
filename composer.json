@@ -1,6 +1,6 @@
 {
     "name": "webforward/gitdeploy",
-    "description": "Easy to use git deployment for PHP projects with composer and npm support",
+    "description": "Easy to use automatic git deployment for PHP projects with composer and npm support",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,14 +13,9 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.1"
+        "php": ">=7.0"
     },
     "autoload": {
-        "psr-4": {
-            "Webforward\\GitDeploy\\": "src/"
-        }
-    },
-    "autoload-dev": {
         "psr-4": {
             "Webforward\\GitDeploy\\": "src/"
         }
