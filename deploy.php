@@ -313,18 +313,19 @@ class GitDeploy
 
     private function command($command): array {
         if (is_int($this->time_limit)) set_time_limit($this->time_limit);
-        exec($command . ' 2>&1',
-            $output_arr,
-            $return_code);
-        if ($return_code === 0) {
-            $output = implode(self::NL, $output_arr);
-            $output .= ob_get_contents();
-            $this->log([
-                sprintf('<span class="prompt">$</span> <span class="command">%s</span>',
-                    trim(htmlentities($command ?: ''))),
-                sprintf('<div class="output">%s</div>',
-                    trim(htmlentities($output ?: '')))
-            ]);
+        $this->log(sprintf('<span class="prompt">$</span> <span class="command">%s</span>',
+            trim(htmlentities($command ?: ''))));
+
+        $spec = [['pipe', 'r'],['pipe', 'w'],['pipe', 'w']];
+        $process = proc_open($command, $spec, $pipes, $this->temp_dir, []);
+        $output_arr = [];
+        if (is_resource($process)) {
+            while ($s = fgets($pipes[1])) {
+                $s = trim($s);
+                $output_arr[] = $s;
+                $this->log($s);
+            }
+            $this->log();
             return $output_arr;
         } else {
             $this->error([
