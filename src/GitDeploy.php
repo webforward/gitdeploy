@@ -175,7 +175,7 @@ class GitDeploy
         // Check if the functions we need are disabled for security reasons
         $required_functions = [
             'shell_exec',
-            'exec'
+            'proc_open'
         ];
         $disabled_functions = explode(',',
             ini_get('disable_functions'));

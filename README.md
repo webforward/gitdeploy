@@ -3,7 +3,7 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
 
 ## Requirements
 
-* PHP 7.0 or above with `shell` and `shell_exec` functions enabled.
+* PHP 7.0 or above with `proc_open` and `shell_exec` functions enabled.
 * `git` and `rsync` are required on the server that's running the script
   (_server machine_).
   - Optionally, `tar` is required for backup functionality (`backup_dir` option).
