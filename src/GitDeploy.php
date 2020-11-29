@@ -95,7 +95,7 @@ class GitDeploy
     /**
      * Check that all class variables are set correctly before deployment
      */
-    public function checkVariables(): void {
+    public function checkVariables() {
 
         // Repository
         if (!preg_match('/^((git@|http(s)?:\/\/)([\w.@]+)([\/:]))([\w,\-_]+)\/([\w,\-_]+)(.git)?((\/)?)$/', $this->remote_repository))
@@ -168,7 +168,7 @@ class GitDeploy
     /**
      * Check that the server has everything in place that is required to deploy
      */
-    public function checkEnvironment(): void {
+    public function checkEnvironment() {
         $this->log('Checking the environment ...' . self::NL);
         $this->log('Running as <strong class="output">' . trim(shell_exec('whoami')) . '</strong>.' . self::NL);
 
@@ -209,7 +209,7 @@ class GitDeploy
     /**
      * Where the magic happens, the deployment
      */
-    public function deploy(): void {
+    public function deploy() {
         ob_implicit_flush(true);
         ob_end_flush();
 
@@ -346,7 +346,7 @@ class GitDeploy
     /**
      * Cleans up all temporary files which were produced during the deployment process
      */
-    private function cleanUp(): void {
+    private function cleanUp() {
         if ($this->clean_up === true && is_dir($this->temp_dir)) {
             $this->log('Cleaning up temporary files ...' . self::NL);
             $this->command(sprintf('rm -rf %s',
@@ -391,7 +391,7 @@ class GitDeploy
      * TODO: A better way might be to use output buffering and echo, then capture the output for email later
      * @param string $html
      */
-    private function log($html = ''): void {
+    private function log($html = '') {
         if (is_array($html)) $html = implode(self::NL,
             $html);
         $html .= self::NL;
@@ -403,7 +403,7 @@ class GitDeploy
      * When there is an error, it needs to be handled in the correct way
      * @param $message
      */
-    private function error($message): void {
+    private function error($message) {
         if (is_array($message)) $message = implode(self::NL,
             $message);
         $html = '<div class="error">Error: ' . $message . '</div>';
@@ -417,7 +417,7 @@ class GitDeploy
      * Warnings need to be styled differently to normal output
      * @param $message
      */
-    private function warning($message): void {
+    private function warning($message) {
         $html = '<div class="warning">Warning: ' . $message . '</div>';
         $this->log($html);
     }
@@ -426,7 +426,7 @@ class GitDeploy
      * Send success and error emails to $email_recipients
      * @param false $error
      */
-    private function sendEmail($error = false): void {
+    private function sendEmail($error = false) {
         if ($error === true && $this->email_on_error !== true) return;
         if ($error === false && $this->email_on_success !== true) return;
         if (empty($this->email_recipients) !== true) {
@@ -450,7 +450,7 @@ class GitDeploy
     /**
      * Produces a HTML header
      */
-    private function header(): void {
+    private function header() {
         $this->log('<!DOCTYPE html>
         <html lang="en">
         <head><meta charset="utf-8"><meta name="robots" content="noindex"><title>GitDeploy</title>
@@ -469,7 +469,7 @@ class GitDeploy
     /**
      * Produces a HTML footer
      */
-    private function footer(): void {
+    private function footer() {
         $this->log('</pre></body></html>');
     }
 
