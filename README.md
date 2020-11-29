@@ -34,13 +34,15 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
  the internet, it should be placed behind an admin php session, or the requirement 
  to enter a secret key or password to run the deploy() function. Check `deploy.php` 
  for an easy method of how this can be implemented.
- 4. Test the deployment by visiting the script url in your browser.
- 5. Once happy, follow the steps of setting up a hook. See GitHub, BitBucket or 
+ 4. Make sure these files also exist within your git repository else (depending on your 
+   configured options) they could be removed on the next deployment.
+ 5. Test the deployment by visiting the script url in your browser.
+ 6. Once happy, follow the steps of setting up a hook. See GitHub, BitBucket or 
  Generic Git for examples.
     
 ## Usage - Standalone
 
- 1. Download a copy of this repository into a folder within your website public folder.
+ 1. Download a copy of this repository into a directory within your website, for example /deploy.
  2. Make a copy of `deploy.php` to edit or use the following code in your own file 
  and configure options:
  ```php
@@ -55,8 +57,10 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
  3. Setup a check/method in which the above code is not publicly accessible from 
  the internet, you can use the example in `deploy.php`. For security reasons, your script 
  should require the input of a secret key or password to run the deploy() function. 
- 4. Test the deployment by visiting the script url in your browser.
- 5. Once happy, follow the steps of setting up a hook. See GitHub, BitBucket or 
+ 4. Make sure these files also exist within your git repository else (depending on your 
+  configured options) they could be removed on the next deployment.
+ 5. Test the deployment by visiting the script url in your browser.
+ 6. Once happy, follow the steps of setting up a hook. See GitHub, BitBucket or 
  Generic Git for examples.
 
 ### GitHub
