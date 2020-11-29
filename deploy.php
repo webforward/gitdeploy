@@ -25,6 +25,10 @@ SOFTWARE.
 
 namespace Webforward;
 
+/**
+ * Class GitDeploy
+ * @package Webforward
+ */
 class GitDeploy
 {
     public $remote_repository = 'git@provider.org:owner/repository.git';
@@ -57,10 +61,9 @@ class GitDeploy
     private $log = '';
     const NL = "\r\n";
 
-    function __construct() {
-
-    }
-
+    /**
+     * Check that all class variables are set correctly before deployment
+     */
     public function checkVariables(): void {
 
         // Repository
@@ -131,6 +134,9 @@ class GitDeploy
 
     }
 
+    /**
+     * Check that the server has everything in place that is required to deploy
+     */
     public function checkEnvironment(): void {
         $this->log('Checking the environment ...' . self::NL);
         $this->log('Running as <strong class="output">' . trim(shell_exec('whoami')) . '</strong>.' . self::NL);
@@ -146,7 +152,6 @@ class GitDeploy
             if (in_array($function,
                 $disabled_functions)) $this->error('<div class="error">PHP function<strong>' . $function . '</strong> is disabled. ' . 'It needs to be enabled on the server for this script to work.</div>');
         }
-
 
         // We need to check that we have the required applications installed on the server to perform this deploy
         $required_binaries = array(
@@ -172,9 +177,11 @@ class GitDeploy
         }
 
         $this->log(self::NL . 'Environment <strong class="success">OK</strong>.' . self::NL);
-
     }
 
+    /**
+     * Where the magic happens, the deployment
+     */
     public function deploy(): void {
         ob_implicit_flush(true);
         ob_end_flush();
@@ -186,7 +193,10 @@ class GitDeploy
             '========</h1>'
         ]);
 
+        // Check that all variables are set correctly before deployment
         $this->checkVariables();
+
+        // Check that the server environment has the required setup to be able to deploy
         $this->checkEnvironment();
 
         $this->log([
@@ -215,9 +225,10 @@ class GitDeploy
                 $this->temp_dir));
         }
 
+        // Change our working directory to the temporary directory
         chdir($this->temp_dir);
 
-        // Update the submodules
+        // Update the git submodules
         $this->command('git submodule update --init --recursive');
 
         // Install required composer packages
@@ -234,7 +245,7 @@ class GitDeploy
             }
         }
 
-        // Install required composer packages
+        // Install required npm packages
         if ($this->use_npm !== false) {
             $npm_file = $this->temp_dir . '/package.json';
             if (is_file($npm_file)) {
@@ -246,8 +257,8 @@ class GitDeploy
             }
         }
 
-        // Create a backup of the target directory before we go further
-        if ($this->backup !== false) {
+        // Create a backup of the target directory before we make any changes
+        if ($this->backup === true) {
             $backup_file = $this->backup_dir . '/' . implode('-', [basename($this->target_dir), md5($this->target_dir), date('YmdHis')]) . '.tar.gz';
             $this->command(sprintf('tar --exclude=\'%s*\' -czf %s %s',
                 $this->temp_dir,
@@ -261,12 +272,13 @@ class GitDeploy
             ));
         }
 
-        // It is time to move things to live
+        // Prepare things that we do not want moved to the target directory
         $exclude = '';
         foreach ($this->exclude_files as $ex) {
             $exclude .= ' --exclude=' . $ex;
         }
 
+        // It is time to move things to the target directory
         $this->command(sprintf('rsync -rltgoDzvO %s/ %s/ %s %s',
             $this->temp_dir,
             $this->target_dir,
@@ -289,12 +301,13 @@ class GitDeploy
             }
         }
 
-        // Create a file containing the commit of this deploy
+        // Create a file containing the commit of this deploy, useful for debugging or displaying the commit in the app
         if ($this->version_file !== '') $this->command(sprintf('git --git-dir="%s/.git" --work-tree="%s" describe --always > %s',
             $this->temp_dir,
             $this->temp_dir,
             $this->version_file));
 
+        // Clean up temporary files
         $this->cleanUp();
 
         $this->log('<div class="success">Deploy Complete.</div>');
