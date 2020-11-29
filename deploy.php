@@ -31,33 +31,64 @@ namespace Webforward;
  */
 class GitDeploy
 {
+    /** @var string $remote_repository The repository url which you would like to deploy */
     public $remote_repository = 'git@provider.org:owner/repository.git';
+
+    /** @var string $branch The repository branch which you would like to deploy */
     public $branch = 'master';
+
+    /** @var string $target_dir The location in which you would like the repository deployed to */
     public $target_dir = '';
+
+    /** @var string|boolean $version_file The file location in which you would like to store the commit id */
+    /** @var string|boolean $version_file false will disable this feature */
     public $version_file = '';
+
+    /** @var boolean $git_rm Remove files which were deleted in the commit */
     public $git_rm = true;
 
+    /** @var boolean $delete_files Remove all files that do not exist in the commit */
+    /** @var boolean $delete_files Be very careful with this if your website has a CMS and stores files not in git */
     public $delete_files = false;
+
+    /** @var array $exclude_files List of files which may come down from git which you do not want in the target directory */
     public $exclude_files = ['.git', 'LICENSE*', 'README*'];
+
+    /** @var string $temp_dir The location where you would like the temporary files to be stored, automatically generated to /tmp if left empty */
     public $temp_dir = '';
 
+    /** @var boolean $clean_up Clean up temporary files after deployment is finished, false is quicker, true is cleaner */
     public $clean_up = true;
 
-    public $time_limit = 300; // 5 Minutes - false to not set
+    /** @var boolean $time_limit Override php's default time_limit for scripts */
+    public $time_limit = 300; // 5 Minutes (same as composers default timeout) - false to not set
 
-    public $backup = false;
-    public $backup_dir = '';
+    /** @var string|boolean $backup_dir The location in which you would like to store a timestamped tar.gz backup of the target directory */
+    /** @var string|boolean $backup_dir false will disable this feature */
+    public $backup_dir = false;
 
+    /** @var boolean $use_composer Run `composer install` during deployment */
     public $use_composer = false;
-    public $composer_opts = '--no-dev';
-    public $composer_home = '';
 
+    /** @var string $composer_opts Additional options for `composer install` */
+    public $composer_opts = '--no-dev';
+
+    /** @var string|boolean $composer_opts The location which is the composer home directory */
+    public $composer_home = false;
+
+    /** @var boolean $use_npm Run `npm install` during deployment */
     public $use_npm = false;
 
+    /** @var boolean $email_on_success Send an email to all $email_recipients on successful completion of deployment */
     public $email_on_success = false;
+
+    /** @var boolean $email_on_error Send an email to all $email_recipients when an error occurs during deployment */
     public $email_on_error = true;
+
+    /** @var string|array $email_recipients One or more recipients you would like an email to be sent to should $email_on_success or $email_on_error be enabled  */
     public $email_recipients = [];
 
+    //////////////////////////
     private $log = '';
     const NL = "\r\n";
 
@@ -110,7 +141,7 @@ class GitDeploy
         if (!is_int($this->time_limit) && $this->time_limit !== false) $this->error('Time Limit must be false or an integer in seconds.');
 
         // Backup Dir
-        if ($this->backup_dir === true) {
+        if ($this->backup_dir !== false) {
             $this->backup_dir = rtrim($this->backup_dir, '/\\');
             if (!is_writable($this->backup_dir))
                 $this->error('Backup directory is not writable.');
@@ -119,7 +150,7 @@ class GitDeploy
         // Composer
         if ($this->use_composer !== false) {
             if (!is_string($this->composer_opts)) $this->error('Composer Options must be a string.');
-            if ($this->composer_home !== '') {
+            if (!empty($this->composer_home)) {
                 $this->composer_home = rtrim($this->composer_home, '/\\');
                 if (!is_dir($this->composer_home)) $this->error('Composer home directory does not exist.');
                 if (!is_writable($this->composer_home)) $this->error('Composer home directory is not writable.');
@@ -158,11 +189,7 @@ class GitDeploy
             'git',
             'rsync'
         );
-        if (in_array($this->backup_dir,
-                [
-                    false,
-                    ''
-                ]) === false) $required_binaries[] = 'tar';
+        if (!empty($this->backup_dir)) $required_binaries[] = 'tar';
         if ($this->use_composer !== false) $required_binaries[] = 'composer --no-ansi';
 
         foreach ($required_binaries as $binary) {
@@ -235,7 +262,7 @@ class GitDeploy
         if ($this->use_composer !== false) {
             $composer_file = $this->temp_dir . '/composer.json';
             if (is_file($composer_file)) {
-                if ($this->composer_home !== '') putenv('COMPOSER_HOME=' . $this->composer_home);
+                if (empty($this->composer_home)) putenv('COMPOSER_HOME=' . $this->composer_home);
                 $this->command(sprintf('composer --no-ansi --no-interaction --no-progress --working-dir=%s install %s',
                     $this->temp_dir,
                     $this->composer_opts));
@@ -258,7 +285,7 @@ class GitDeploy
         }
 
         // Create a backup of the target directory before we make any changes
-        if ($this->backup === true) {
+        if (!empty($this->backup_dir)) {
             $backup_file = $this->backup_dir . '/' . implode('-', [basename($this->target_dir), md5($this->target_dir), date('YmdHis')]) . '.tar.gz';
             $this->command(sprintf('tar --exclude=\'%s*\' -czf %s %s',
                 $this->temp_dir,
@@ -316,6 +343,9 @@ class GitDeploy
         $this->sendEmail();
     }
 
+    /**
+     * Cleans up all temporary files which were produced during the deployment process
+     */
     private function cleanUp(): void {
         if ($this->clean_up === true && is_dir($this->temp_dir)) {
             $this->log('Cleaning up temporary files ...' . self::NL);
@@ -324,6 +354,11 @@ class GitDeploy
         }
     }
 
+    /**
+     * Runs a linux command and returns the output as an array
+     * @param $command
+     * @return array
+     */
     private function command($command): array {
         if (is_int($this->time_limit)) set_time_limit($this->time_limit);
         $this->log(sprintf('<span class="prompt">$</span> <span class="command">%s</span>',
@@ -351,6 +386,11 @@ class GitDeploy
         return [];
     }
 
+    /**
+     * Outputs text to the screen and saves a copy for the email later
+     * TODO: A better way might be to use output buffering and echo, then capture the output for email later
+     * @param string $html
+     */
     private function log($html = ''): void {
         if (is_array($html)) $html = implode(self::NL,
             $html);
@@ -359,6 +399,10 @@ class GitDeploy
         echo $html;
     }
 
+    /**
+     * When there is an error, it needs to be handled in the correct way
+     * @param $message
+     */
     private function error($message): void {
         if (is_array($message)) $message = implode(self::NL,
             $message);
@@ -369,11 +413,19 @@ class GitDeploy
         exit;
     }
 
+    /**
+     * Warnings need to be styled differently to normal output
+     * @param $message
+     */
     private function warning($message): void {
         $html = '<div class="warning">Warning: ' . $message . '</div>';
         $this->log($html);
     }
 
+    /**
+     * Send success and error emails to $email_recipients
+     * @param false $error
+     */
     private function sendEmail($error = false): void {
         if ($error === true && $this->email_on_error !== true) return;
         if ($error === false && $this->email_on_success !== true) return;
@@ -395,6 +447,9 @@ class GitDeploy
         }
     }
 
+    /**
+     * Produces a HTML header
+     */
     private function header(): void {
         $this->log('<!DOCTYPE html>
         <html lang="en">
@@ -411,10 +466,18 @@ class GitDeploy
         </style></head><body><pre>');
     }
 
+    /**
+     * Produces a HTML footer
+     */
     private function footer(): void {
         $this->log('</pre></body></html>');
     }
 
+    /**
+     * Converts bytes into a friendly size
+     * @param int $bytes
+     * @return string
+     */
     private function formatSize(int $bytes): string {
         if ($bytes >= 1073741824)
             return number_format($bytes / 1073741824, 2) . ' GB';
