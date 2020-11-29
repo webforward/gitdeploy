@@ -24,6 +24,9 @@ if (!isset($_GET['secret']) || ($_GET['secret'] !== $secret || $secret === 'chan
 use Webforward\GitDeploy;
 $gd = new GitDeploy();
 
+// You could also call the class using the following without the need for the use line:
+//$gd = new \Webforward\GitDeploy();
+
 // As a minimum, you need to set the following two options
 
 /** @var string remote_repository
