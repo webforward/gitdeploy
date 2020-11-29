@@ -24,9 +24,11 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
  2. Use the following code in your project and configure options:
  ```php
  use Webforward\GitDeploy;
- $gitDeploy = new GitDeploy();
- // Your configurable options here
- $gitDeploy->deploy();
+ $gd = new GitDeploy();
+ $gd->remote_repository = 'https://github.com/williammalone/Simple-HTML5-Drawing-App.git';
+ $gd->target_dir = '/home/user/public_html';
+ // Your configurable options here, see deploy.php
+ $gd->deploy();
  ```
  3. Setup a check/method in which the above code is not publicly accessible from 
  the internet, it should be placed behind an admin php session, or the requirement 
@@ -44,9 +46,11 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
  ```php
  require 'path/to/src/GitDeploy.php';
  use Webforward\GitDeploy;
- $gitDeploy = new GitDeploy();
- // Your configurable options here
- $gitDeploy->deploy();
+ $gd = new GitDeploy();
+ $gd->remote_repository = 'https://github.com/williammalone/Simple-HTML5-Drawing-App.git';
+ $gd->target_dir = '/home/user/public_html';
+ // Your configurable options here, see deploy.php
+ $gd->deploy();
  ```
  3. Setup a check/method in which the above code is not publicly accessible from 
  the internet, you can use the example in `deploy.php`. The script should require 

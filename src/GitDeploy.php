@@ -23,6 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+/**
+ * GitDeploy - PHP email creation and transport class.
+ *
+ * @see https://github.com/webforward/gitdeploy/ GitDeploy
+ *
+ * @author    WEBFWD Limited t/a Webforward
+ * @author    Richard Leishman
+ * @license   https://tldrlegal.com/license/mit-license MIT License
+ */
+
 namespace Webforward;
 
 /**
@@ -95,7 +105,7 @@ class GitDeploy
     /**
      * Check that all class variables are set correctly before deployment
      */
-    public function checkVariables() {
+    private function checkVariables() {
 
         // Repository
         if (!preg_match('/^((git@|http(s)?:\/\/)([\w.@]+)([\/:]))([\w,\-_]+)\/([\w,\-_]+)(.git)?((\/)?)$/', $this->remote_repository))
@@ -168,7 +178,7 @@ class GitDeploy
     /**
      * Check that the server has everything in place that is required to deploy
      */
-    public function checkEnvironment() {
+    private function checkEnvironment() {
         $this->log('Checking the environment ...' . self::NL);
         $this->log('Running as <strong class="output">' . trim(shell_exec('whoami')) . '</strong>.' . self::NL);
 
@@ -314,18 +324,24 @@ class GitDeploy
 
         // Delete files that were removed in the git commit and then remove parent direct if it is empty
         if ($this->git_rm === true) {
-            $delete_files = $this->command('git log --diff-filter=D --summary | grep "^ delete mode" | cut -d " " -f5');
-            if (!empty($delete_files)) {
-                foreach ($delete_files as $file) {
-                    $file_path = $this->target_dir . '/' . $file;
-                    if (!file_exists($this->temp_dir . ' / ' . $file)) {
-                        $this->log('Removing file ' . $file_path);
-                        @unlink($file);
-                        @rmdir(dirname($file));
+            if ($this->delete_files === true) {
+                $this->warning('Ignoring `git_rm` as `delete_files` is enabled.');
+            } else {
+                $delete_files = $this->command('git log --diff-filter=D --summary | grep "^ delete mode" | cut -d " " -f5');
+                if (!empty($delete_files)) {
+                    foreach ($delete_files as $file) {
+                        $file_path = $this->target_dir . '/' . $file;
+                        if (!file_exists($this->temp_dir . ' / ' . $file)) {
+                            $this->log('Removing file ' . $file_path);
+                            @unlink($file);
+                            @rmdir(dirname($file));
+                        }
                     }
+                    $this->log(self::NL);
                 }
-                $this->log(self::NL);
             }
+
+
         }
 
         // Create a file containing the commit of this deploy, useful for debugging or displaying the commit in the app
