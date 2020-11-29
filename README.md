@@ -30,8 +30,8 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
  // Your configurable options here, see deploy.php
  $gd->deploy();
  ```
- 3. Setup a check/method in which the above code is not publicly accessible from 
- the internet, it should be placed behind an admin php session, or the requirement 
+ 3. Setup a check/method in which the above code is not publicly accessible by anyone, 
+ the code should be placed behind an admin php session, or the requirement 
  to enter a secret key or password to run the deploy() function. Check `deploy.php` 
  for an easy method of how this can be implemented.
  4. Make sure these files also exist within your git repository else (depending on your 
@@ -43,8 +43,7 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
 ## Usage - Standalone
 
  1. Download a copy of this repository into a directory within your website, for example /deploy.
- 2. Make a copy of `deploy.php` to edit or use the following code in your own file 
- and configure options:
+ 2. Edit `deploy.php` or make your own php file and use the following code with configure options:
  ```php
  use Webforward\GitDeploy; // This line must be at the top of a script, not inside a function
  require 'path/to/src/GitDeploy.php'; 
@@ -54,8 +53,8 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
  // Your configurable options here, see deploy.php
  $gd->deploy();
  ```
- 3. Setup a check/method in which the above code is not publicly accessible from 
- the internet, you can use the example in `deploy.php`. For security reasons, your script 
+ 3. Setup a check/method in which the above code is not publicly accessible by anyone, 
+ you can use the example already written in `deploy.php`. For security reasons, your script 
  should require the input of a secret key or password to run the deploy() function. 
  4. Make sure these files also exist within your git repository else (depending on your 
   configured options) they could be removed on the next deployment.
