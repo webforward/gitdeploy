@@ -1,5 +1,5 @@
 <?php
-require 'deploy.php';
+require 'src/GitDeploy.php';
 
 // You must change the secret as you do not want anyone to be able to access this script directly.
 $secret = 'changeme';

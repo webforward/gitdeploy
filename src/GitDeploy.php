@@ -2,7 +2,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 WEBFWD LTD t/a Webforward
+Copyright (c) 2020 WEBFWD Limited t/a Webforward
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
