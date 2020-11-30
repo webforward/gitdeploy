@@ -62,7 +62,7 @@ class GitDeploy
     public $delete_files = false;
 
     /** @var array $exclude_files List of files which may come down from git which you do not want in the target directory */
-    public $exclude_files = ['.git', 'LICENSE*', 'README*'];
+    public $exclude_files = ['.git', '.gitignore', 'LICENSE*', 'README*'];
 
     /** @var string $temp_dir The location where you would like the temporary files to be stored, automatically generated to /tmp if left empty */
     public $temp_dir = '';
