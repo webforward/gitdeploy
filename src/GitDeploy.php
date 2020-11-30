@@ -226,7 +226,7 @@ class GitDeploy
         $this->header();
 
         $this->log([
-            '<h1>GitDeply',
+            '<h1>GitDeploy',
             '========</h1>'
         ]);
 
