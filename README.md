@@ -20,7 +20,7 @@ _Easy to use automatic git deployment for PHP projects with composer and npm sup
 
 ## Usage - In your own project though composer
 
- 1. Start by running the command `composer require webforward/gitdeploy` .
+ 1. Start by running the command `composer require webforward/gitdeploy:dev-master` .
  2. Use the following code in your project and configure options:
  ```php
  use Webforward\GitDeploy; // PSR-4 - This line must be at the top of a script, not inside a function
