@@ -191,7 +191,7 @@ class GitDeploy
             ini_get('disable_functions'));
         if (!empty($disabled_functions)) foreach ($required_functions as $function) {
             if (in_array($function,
-                $disabled_functions)) $this->error('<div class="error">PHP function<strong>' . $function . '</strong> is disabled. ' . 'It needs to be enabled on the server for this script to work.</div>');
+                $disabled_functions)) $this->error('<div class="error">PHP function <strong>' . $function . '</strong> is disabled. ' . 'It needs to be enabled on the server for this script to work.</div>');
         }
 
         // We need to check that we have the required applications installed on the server to perform this deploy
