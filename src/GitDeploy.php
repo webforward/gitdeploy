@@ -33,7 +33,7 @@ SOFTWARE.
  * @license   https://tldrlegal.com/license/mit-license MIT License
  */
 
-namespace Webforward;
+namespace GitDeploy;
 
 /**
  * Class GitDeploy
