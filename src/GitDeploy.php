@@ -316,7 +316,8 @@ class GitDeploy
         }
 
         // It is time to move things to the target directory
-        $this->command(sprintf('rsync -rltgoDzvO %s/ %s/ %s %s',
+        $this->command(sprintf('rsync -rltgoDzvO %s/* %s/.[^.]* %s/ %s %s',
+            $this->temp_dir,
             $this->temp_dir,
             $this->target_dir,
             ($this->delete_files === true) ? '--delete-after' : '',
