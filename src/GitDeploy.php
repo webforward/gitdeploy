@@ -227,7 +227,7 @@ class GitDeploy
 
         $this->log([
             '<h1>GitDeploy',
-            '========</h1>'
+            '=========</h1>'
         ]);
 
         // Check that all variables are set correctly before deployment
